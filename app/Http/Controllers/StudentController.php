@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use App\Imports\StudentImport;
+use App\Exports\StudentTemplateExport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
@@ -63,7 +64,7 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'class' => 'required|string|max:255',
             'nisn' => 'required|string|max:255',
-            'no_exam' => 'required|string|max:255',
+            'nis' => 'required|string|max:255',
             'status' => 'required|integer',
             'message' => 'nullable|string',
             'nama_ortu' => 'nullable|string|max:255',
@@ -74,7 +75,7 @@ class StudentController extends Controller
             'name' => $request->name,
             'class' => $request->class,
             'nisn' => $request->nisn,
-            'no_exam' => $request->no_exam,
+            'nis' => $request->nis,
             'status' => $request->status,
             'message' => $request->message ?? '',
             'nama_ortu' => $request->nama_ortu ?? '',
@@ -119,6 +120,10 @@ class StudentController extends Controller
         return redirect('/student');
     }
 
+    public function download_format()
+    {
+        return Excel::download(new StudentTemplateExport, 'FORMAT-IMPORT-SISWA.xlsx');
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -145,24 +150,25 @@ class StudentController extends Controller
             'name' => 'required|string|max:255',
             'class' => 'required|string|max:255',
             'nisn' => 'required|string|max:255',
-            'no_exam' => 'required|string|max:255',
+            'nis' => 'required|string|max:255',
             'status' => 'required|integer',
             'message' => 'nullable|string',
             'nama_ortu' => 'nullable|string|max:255',
             'tempat_tgl_lahir' => 'nullable|string|max:255',
         ]);
 
-        $student = Student::find($id);
-        $student->update([
-            'name' => $request->name,
-            'class' => $request->class,
-            'nisn' => $request->nisn,
-            'no_exam' => $request->no_exam,
-            'status' => $request->status,
-            'message' => $request->message ?? '',
-            'nama_ortu' => $request->nama_ortu ?? '',
-            'tempat_tgl_lahir' => $request->tempat_tgl_lahir ?? '',
-        ]);
+        $student = Student::findOrFail($id);
+        
+        $student->name = $request->name;
+        $student->class = $request->class;
+        $student->nisn = $request->nisn;
+        $student->nis = $request->nis;
+        $student->status = $request->status;
+        $student->message = $request->message ?? '';
+        $student->nama_ortu = $request->nama_ortu ?? '';
+        $student->tempat_tgl_lahir = $request->tempat_tgl_lahir ?? '';
+        
+        $student->save();
 
         return redirect('/student')->with('success', 'Data siswa berhasil diupdate');
     }

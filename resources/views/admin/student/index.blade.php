@@ -51,11 +51,10 @@ Admin
                         <table id="example" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr class="bg-success text-white" style="font-size: 14px;">
-                                    <th>Nama</th>
+                                    <th>Nama Lengkap</th>
                                     <th>Kelas</th>
-                                    <th>Nisn</th>
-                                    <th>No Ujian</th>
-                                    <th>status </th>
+                                    <th>NISN</th>
+                                    <th>Status</th>
                                     <th>Pesan</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -68,7 +67,6 @@ Admin
                                     <td>@{{ st.name }}</td>
                                     <td>@{{ st.class }}</td>
                                     <td>@{{ st.nisn }}</td>
-                                    <td>@{{ st.no_exam }}</td>
                                     <td v-if="st.status == 1">
                                         <span class="badge bg-success">
                                             LULUS
@@ -83,6 +81,7 @@ Admin
 
                                     <td>@{{ st.message }}</td>
                                     <td>
+                                        <a :href="'/nilai/' + st.id + '/edit'" class="btn btn-info mb-1"><i class="fa fa-graduation-cap"></i> Isi Nilai</a>
                                         <a :href="'/student/edit/' + st.id" class="btn btn-warning mb-1"><i class="fa fa-edit"></i></a>
                                         <a class="btn btn-danger mb-1" href="" @click.prevent="deleteRecord(st.id)"><i class="fa fa-trash"></i></a>
                                     </td>

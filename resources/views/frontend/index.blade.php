@@ -3,248 +3,225 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Hasil Kelulusan - {{ $web->title ?? 'Cek Kelulusan' }}</title>
-    <meta name="description" content="Hasil pengecekan kelulusan siswa"/>
-    <link rel="shortcut icon" href="/files/logo/{{ $web->logo ?? 'LOGO.PNG' }}"/>
+    <title>Hasil Kelulusan - {{ $web->title ?? 'SMP Negeri 44 Palembang' }}</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --bg: #0D0E12;
-            --surface: #111216;
-            --text-main: #F3F3F3;
-            --text-muted: #888888;
-            --accent: #C5A880;
-            --accent-hover: #E5C8A0;
-            --danger: #D67268;
-            --border: rgba(255, 255, 255, 0.08);
+            /* Warna Pastel Utama Dominan Biru SMPN 44 */
+            --overlay-blue-pastel: linear-gradient(135deg, rgba(20, 47, 92, 0.88), rgba(43, 91, 158, 0.82));
+            --card-white-pastel: rgba(255, 255, 255, 0.97);
+            --primary-blue: #2563eb;
+            --primary-pastel: #dbeafe;
+            --accent-gold: #eab308; /* Aksen emas dari bintang logo */
+            --accent-gold-soft: #fef9c3;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
         }
 
         body {
-            font-family: 'Jost', sans-serif;
-            background: var(--bg);
-            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-dark);
             min-height: 100vh;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
+            
+            /* Menggunakan foto kedua sebagai background samar seluruh halaman */
+            background-image: url("{{ asset('frontend/assets/img/IMG_5553.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
         }
 
-        .noise-overlay {
-            position: fixed; inset: 0; z-index: 9999; pointer-events: none; opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        /* Overlay Biru Pastel untuk meredam background foto agar samar namun elegan */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--overlay-blue-pastel);
+            z-index: -1;
         }
 
+        /* Animasi Confetti Jatuh secara Elegan */
         .confetti-container { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-        .confetti {
-            position: absolute; top: -20px;
-            width: 4px; height: 16px;
-            opacity: 0; animation: confettiFall linear forwards;
-        }
-        @keyframes confettiFall {
+        .confetti { position: absolute; top: -20px; width: 6px; height: 14px; opacity: 0; animation: fall linear forwards; }
+        @keyframes fall {
             0% { opacity: 1; transform: translateY(0) rotate(0deg); }
-            100% { opacity: 0; transform: translateY(100vh) rotate(720deg); }
+            100% { opacity: 0; transform: translateY(100vh) rotate(360deg); }
         }
 
-        .brand-area {
-            position: absolute; top: 2.5rem; left: 3rem;
-            display: flex; align-items: center; gap: 1rem; z-index: 50;
-            text-decoration: none; color: var(--text-main);
+        /* Navigasi Atas */
+        .header-nav {
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
         }
 
-        .brand-area img {
-            height: 36px; width: auto;
-            filter: grayscale(100%) brightness(150%);
-            opacity: 0.9;
-        }
-
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem; letter-spacing: 0.1em;
-            text-transform: uppercase; font-weight: 600;
-        }
+        .brand-area { display: flex; align-items: center; gap: 1rem; text-decoration: none; }
+        .brand-area img { height: 50px; width: auto; }
+        .brand-name { font-size: 1.1rem; text-transform: uppercase; font-weight: 800; color: #ffffff; letter-spacing: 0.05em; }
 
         .login-link {
-            position: absolute; top: 3rem; right: 3rem; z-index: 50;
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em;
-            color: var(--text-muted); text-decoration: none;
-            padding-bottom: 4px; border-bottom: 1px solid transparent;
-            transition: all 0.3s ease;
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
+            color: rgba(255, 255, 255, 0.8); text-decoration: none;
+            padding: 0.6rem 1.4rem; border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px; background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(4px); transition: all 0.3s ease;
         }
+        .login-link:hover { color: #fff; background: var(--primary-blue); border-color: var(--primary-blue); }
 
-        .login-link:hover { color: var(--accent); border-color: var(--accent); }
-
-        .result-page {
+        /* Area Utama */
+        .result-container {
             flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 8rem 2rem 4rem; position: relative; z-index: 10;
+            padding: 2rem; z-index: 5;
         }
 
+        /* Penghitung Waktu Mundur */
+        .countdown-wrap {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em;
+            color: var(--accent-gold-soft); background: rgba(234, 179, 8, 0.15);
+            margin-bottom: 2rem; padding: 0.6rem 1.5rem; 
+            border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 50px;
+        }
+
+        /* Kartu Hasil Kelulusan */
         .result-card {
-            background: var(--surface); border: 1px solid var(--border);
-            max-width: 680px; width: 100%; padding: 4.5rem;
-            position: relative; overflow: hidden;
-            opacity: 0; animation: fadeSlideUp 1s ease-out 0.2s forwards;
+            background: var(--card-white-pastel);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            max-width: 600px; width: 100%; padding: 3.5rem;
+            text-align: center; position: relative; overflow: hidden;
+            opacity: 0; animation: fadeInUp 0.6s ease-out forwards;
         }
 
         .watermark {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);
-            font-family: 'Playfair Display', serif; font-size: 10rem;
-            color: rgba(255,255,255,0.015); pointer-events: none; z-index: 0; white-space: nowrap;
+            position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg);
+            font-family: 'Playfair Display', serif; font-size: 8rem; font-weight: 700;
+            color: rgba(37, 99, 235, 0.04); pointer-events: none; z-index: 0; user-select: none;
         }
 
         .result-card > * { position: relative; z-index: 1; }
 
+        /* Badge Status */
         .status-badge {
-            font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.2em;
-            padding: 0.4rem 1.2rem; display: inline-block; margin-bottom: 2.5rem;
-            border: 1px solid currentColor;
+            font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;
+            padding: 0.5rem 1.5rem; display: inline-block; margin-bottom: 1.5rem; border-radius: 50px;
         }
-        
-        .status-badge.success { color: var(--accent); }
-        .status-badge.danger { color: var(--danger); }
+        .status-badge.success { background: var(--primary-pastel); color: #1e40af; }
+        .status-badge.danger { background: #fee2e2; color: #991b1b; }
 
         .student-name {
-            font-family: 'Playfair Display', serif; font-size: 3rem;
-            margin-bottom: 1rem; color: var(--text-main); line-height: 1.1;
+            font-family: 'Playfair Display', serif; font-size: 2.4rem; font-weight: 700;
+            margin-bottom: 0.75rem; color: #0f172a;
         }
 
-        .student-message {
-            color: var(--text-muted); line-height: 1.7; margin-bottom: 3.5rem;
-            font-size: 1.05rem;
-        }
+        .student-message { color: var(--text-muted); line-height: 1.6; margin-bottom: 2.5rem; }
 
+        /* Informasi Detail */
         .result-details {
-            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            padding: 2.5rem 0; margin-bottom: 3.5rem;
-            display: grid; gap: 1.75rem;
+            border-top: 1px dashed #e2e8f0; border-bottom: 1px dashed #e2e8f0;
+            padding: 1.5rem 0; margin-bottom: 2.5rem; display: grid; gap: 1rem;
         }
-
         .detail-item { display: flex; justify-content: space-between; align-items: center; }
-        
-        .detail-item span {
-            color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em;
-        }
+        .detail-item span { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; }
+        .detail-item strong { font-size: 1.05rem; color: #1e293b; }
 
-        .detail-item strong {
-            font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400; color: var(--text-main);
-        }
-        
-        .detail-item .text-success { color: var(--accent); }
-        .detail-item .text-danger { color: var(--danger); }
-
-        .btn-group { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-
+        /* Tombol */
+        .btn-group { display: flex; gap: 1rem; }
         .btn-action {
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem;
-            padding: 1.25rem 2.5rem; font-size: 0.85rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.15em;
-            text-decoration: none; transition: all 0.4s ease; border: 1px solid transparent; cursor: pointer;
+            flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 1rem 2rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;
+            text-decoration: none; border-radius: 12px; transition: all 0.3s ease;
         }
+        .btn-action.primary { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2); }
+        .btn-action.primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(59, 130, 246, 0.3); }
+        .btn-action.secondary { background: #f1f5f9; color: #475569; }
+        .btn-action.secondary:hover { background: #e2e8f0; }
 
-        .btn-action.primary { background: var(--accent); color: #000; }
-        .btn-action.primary:hover { background: var(--accent-hover); transform: translateY(-2px); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .btn-action.secondary { background: transparent; color: var(--text-muted); border-color: var(--border); }
-        .btn-action.secondary:hover { color: var(--text-main); border-color: var(--text-main); }
-
-        .countdown-wrap {
-            display: inline-flex; align-items: center; gap: 0.75rem;
-            font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.15em;
-            color: var(--accent); margin-bottom: 2rem;
-            padding: 0.75rem 1.5rem; border: 1px solid var(--border);
-            opacity: 0; animation: fadeSlideUp 1s ease-out forwards;
-        }
-
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        [v-cloak]>* { display: none; }
-        [v-cloak]::before { content: ""; }
+        [v-cloak] > * { display: none; }
 
         @media (max-width: 768px) {
-            .result-card { padding: 3rem 2rem; }
-            .student-name { font-size: 2.2rem; }
-            .watermark { font-size: 6rem; }
-            .brand-area { left: 2rem; top: 2rem; }
-            .login-link { right: 2rem; top: 2.5rem; }
+            .header-nav { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+            .result-card { padding: 2rem 1.5rem; }
+            .student-name { font-size: 1.8rem; }
+            .btn-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="noise-overlay"></div>
-    <div class="confetti-container" id="confetti-container"></div>
+    <div class="confetti-container" id="confetti-holder"></div>
 
-    <a href="/" class="brand-area">
-        <img alt="Logo" src="/files/logo/{{ $web->logo ?? 'LOGO.png' }}"/>
-        <span class="brand-name">{{ $web->title ?? 'Cek Kelulusan' }}</span>
-    </a>
-    
-    <a href="/login" class="login-link">Admin Akses</a>
+    <header class="header-nav">
+        <a href="/" class="brand-area">
+            <img alt="Logo" src="{{ asset('frontend/assets/img/logo_smpn_44_plg.png') }}"/>
+            <span class="brand-name">{{ $web->title ?? 'SMP NEGERI 44 PALEMBANG' }}</span>
+        </a>
+    </header>
 
-    <main id="app" v-cloak class="result-page">
+    <main id="app" v-cloak class="result-container">
         <div class="countdown-wrap">
-            <span id="demo">Memuat waktu...</span>
+            <span id="timer-countdown">Menghitung mundur waktu pengumuman...</span>
         </div>
 
         @if($setting->status == 1)
         <div v-if="currentDate() <= 0" style="width:100%; display:flex; justify-content:center;">
             @if(isset($req_search))
-            <div v-for="st in student" v-if="search == st.no_exam" style="width:100%; display:flex; justify-content:center;">
+            <div v-for="st in student" v-if="search == st.nisn" style="width:100%; display:flex; justify-content:center;">
                 
-                <!-- LULUS -->
                 <div v-if="st.status == 1" class="result-card">
                     <div class="watermark">LULUS</div>
-                    <span class="status-badge success">Status: Lulus</span>
+                    <span class="status-badge success">Selamat! Anda Lulus</span>
                     <h2 class="student-name">@{{ st.name }}</h2>
                     <p class="student-message">@{{ st.message }}</p>
                     
                     <div class="result-details">
-                        <div class="detail-item" v-if="st.no_exam">
-                            <span>No. Ujian</span>
-                            <strong>@{{ st.no_exam }}</strong>
+                        <div class="detail-item">
+                            <span>NISN</span>
+                            <strong>@{{ st.nisn }}</strong>
                         </div>
                         <div class="detail-item">
                             <span>Kelas</span>
                             <strong>@{{ st.class }}</strong>
                         </div>
                         <div class="detail-item">
-                            <span>Keputusan</span>
-                            <strong class="text-success">Dinyatakan Lulus</strong>
+                            <span>Status</span>
+                            <strong style="color: var(--primary-blue)">LULUS</strong>
                         </div>
                     </div>
 
                     <div class="btn-group">
-                        <a :href="'/cetak/'+ st.id" class="btn-action primary">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-3 3m0 0l-3-3m3 3V4"/></svg>
-                            Unduh SKL
-                        </a>
+                        <a :href="'skl/pdf/' + st.nisn" class="btn-action primary" target="_blank">Unduh SKL (PDF)</a>
                         <a href="/" class="btn-action secondary">Kembali</a>
                     </div>
                 </div>
 
-                <!-- DITUNDA -->
                 <div v-if="st.status == 2" class="result-card">
-                    <div class="watermark" style="color: rgba(255,255,255,0.01)">DITUNDA</div>
+                    <div class="watermark" style="color:rgba(220,38,38,0.03)">DITUNDA</div>
                     <span class="status-badge danger">Status: Ditunda</span>
-                    <h2 class="student-name">Mohon Maaf, @{{ st.name }}</h2>
+                    <h2 class="student-name">@{{ st.name }}</h2>
                     <p class="student-message">@{{ st.message }}</p>
                     
                     <div class="result-details">
-                        <div class="detail-item" v-if="st.no_exam">
-                            <span>No. Ujian</span>
-                            <strong>@{{ st.no_exam }}</strong>
+                        <div class="detail-item">
+                            <span>NISN</span>
+                            <strong>@{{ st.nisn }}</strong>
                         </div>
                         <div class="detail-item">
                             <span>Kelas</span>
                             <strong>@{{ st.class }}</strong>
-                        </div>
-                        <div class="detail-item">
-                            <span>Keputusan</span>
-                            <strong class="text-danger">Ditunda</strong>
                         </div>
                     </div>
 
@@ -257,11 +234,10 @@
             @endif
         </div>
         @else
-        <div class="result-card" style="text-align: center;">
-            <div class="watermark">TUTUP</div>
-            <span class="status-badge" style="color: var(--accent); border-color: var(--accent);">Belum Dibuka</span>
-            <h2 class="student-name" style="font-size: 2.2rem;">Akses Ditutup</h2>
-            <p class="student-message" style="margin-inline: auto; margin-bottom: 2.5rem;">Pengumuman belum dibuka. Silakan kembali sesuai dengan jadwal yang telah ditentukan.</p>
+        <div class="result-card">
+            <span class="status-badge" style="background:#fef3c7; color:#d97706;">Belum Dibuka</span>
+            <h2 class="student-name" style="font-size: 2rem;">Akses Belum Dibuka</h2>
+            <p class="student-message">Silakan cek kembali halaman ini sesuai jadwal resmi pengumuman kelulusan sekolah.</p>
             <a href="/" class="btn-action secondary">Kembali</a>
         </div>
         @endif
@@ -269,22 +245,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script>
-        // Confetti for Lulus
+        // Efek Hujan Kebahagiaan (Confetti) Otomatis
         (function(){
-            var hasLulus = {!! json_encode($student->where('status', 1)->count() > 0) !!};
-            if(hasLulus) {
-                var c = document.getElementById('confetti-container');
-                var colors = ['#C5A880', '#E5C8A0', '#FFFFFF'];
+            if({!! json_encode($student->where('status', 1)->count() > 0) !!}) {
+                var container = document.getElementById('confetti-holder');
+                var colors = ['#3b82f6', '#60a5fa', '#f59e0b', '#ffffff'];
                 for(var i=0; i<40; i++){
-                    var el = document.createElement('div');
-                    el.className = 'confetti';
-                    el.style.left = Math.random()*100+'%';
-                    el.style.background = colors[Math.floor(Math.random()*colors.length)];
-                    el.style.animationDuration = (3+Math.random()*4)+'s';
-                    el.style.animationDelay = Math.random()*2+'s';
-                    el.style.width = (2+Math.random()*3)+'px';
-                    el.style.height = (10+Math.random()*15)+'px';
-                    c.appendChild(el);
+                    var piece = document.createElement('div');
+                    piece.className = 'confetti';
+                    piece.style.left = Math.random()*100+'%';
+                    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+                    piece.style.animationDuration = (2.5 + Math.random()*3)+'s';
+                    piece.style.animationDelay = Math.random()*1+'s';
+                    container.appendChild(piece);
                 }
             }
         })();
@@ -295,45 +268,28 @@
                 web: JSON.parse(String.raw `{!! json_encode($web) !!}`),
                 student: JSON.parse(String.raw `{!! json_encode($student) !!}`),
                 setting: JSON.parse(String.raw `{!! json_encode($setting) !!}`),
-                search: '{{ $req_search }}',
-                dt: '{!! $setting->date !!} {!! $setting->time !!}',
-                dt2: '{{ $dt }}',
+                search: '{{ $req_search }}'
             },
             methods: {
-                submitSearch: function() {
-                    if(this.search.trim() !== '') {
-                        window.location.href = `/?search=${this.search}`
-                    }
-                },
                 currentDate() {
-                    let datedb = new Date(this.dt).getTime();
-                    let current = new Date().getTime();
-                    return datedb - current;
-                },
+                    return new Date(this.setting.date + ' ' + this.setting.time).getTime() - new Date().getTime();
+                }
             }
         });
 
-        // Countdown
-        var countDownDate = new Date("{!! $setting->date !!} {!! $setting->time !!}").getTime();
-        var wasWaiting = false;
-        var x = setInterval(function() {
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
-            var days = Math.floor(distance / (1000*60*60*24));
-            var hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
-            var minutes = Math.floor((distance%(1000*60*60))/(1000*60));
-            var seconds = Math.floor((distance%(1000*60))/1000);
-
-            var el = document.getElementById("demo");
-            if(distance < 0) {
-                clearInterval(x);
-                el.innerHTML = "Pengumuman Dibuka";
-                if(wasWaiting) {
-                    setTimeout(() => window.location.reload(), 1500);
-                }
+        // Mekanisme Hitung Mundur Real-time
+        var targetTime = new Date("{!! $setting->date !!} {!! $setting->time !!}").getTime();
+        var timerInterval = setInterval(function() {
+            var remain = targetTime - new Date().getTime();
+            if(remain < 0) {
+                clearInterval(timerInterval);
+                document.getElementById("timer-countdown").innerHTML = "Pengumuman Resmi Telah Dibuka";
             } else {
-                wasWaiting = true;
-                el.innerHTML = days + "H " + hours + "J " + minutes + "M " + seconds + "D";
+                var d = Math.floor(remain / (1000*60*60*24));
+                var h = Math.floor((remain % (1000*60*60*24)) / (1000*60*60));
+                var m = Math.floor((remain % (1000*60*60)) / (1000*60));
+                var s = Math.floor((remain % (1000*60)) / 1000);
+                document.getElementById("timer-countdown").innerHTML = d + " Hari " + h + " Jam " + m + " Menit " + s + " Detik Lagi";
             }
         }, 1000);
     </script>

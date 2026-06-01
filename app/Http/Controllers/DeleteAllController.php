@@ -78,22 +78,15 @@ class DeleteAllController extends Controller
      */
     public function destroy()
     {
-        $student = Student::all();
-
         try {
-            $student->delete();
-            return [
-                'message' => 'data has been deleted',
-                'error' => false,
-                'code' => 200,
-            ];
+            Student::truncate();
+            return response()->json(['success' => true], 200);
         } catch (Exception $e) {
-            return [
+            return response()->json([
+                'success' => false,
                 'message' => 'internal error',
-                'error' => true,
-                'code' => 500,
-                'errors' => $e,
-            ];
+                'errors' => $e->getMessage(),
+            ], 500);
         }
     }
 }

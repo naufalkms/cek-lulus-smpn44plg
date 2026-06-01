@@ -34,8 +34,8 @@ Tambah Siswa
                             <input type="text" name="nisn" class="form-control" value="{{ old('nisn') }}" required>
                         </div>
                         <div class="form-group">
-                            <label>No Ujian</label>
-                            <input type="text" name="no_exam" class="form-control" value="{{ old('no_exam') }}" required>
+                            <label>NIS</label>
+                            <input type="text" name="nis" class="form-control" value="{{ old('nis') }}" required>
                         </div>
                         <div class="form-group">
                             <label>Nama Lengkap</label>

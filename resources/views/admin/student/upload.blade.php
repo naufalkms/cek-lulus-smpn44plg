@@ -25,7 +25,7 @@ Admin
         <br>
         <div class="bs-callout-info callout-border-left mt-1 p-1">
             <strong>Upload data siswa !</strong>
-            <p>Silahkan Upload Data siswa dengan Format File Ini : <a href="/files/format/EXEL-IMPORT-SISWA.xlsx" class="btn btn-sm btn-primary">Download Format Excel</a> </p>
+            <p>Silahkan Upload Data siswa dengan Format File Ini : <a href="/student/download_format" class="btn btn-sm btn-primary">Download Format Excel</a> </p>
         </div>
         <br>
         <div class="card box-shadow-0 border-info">

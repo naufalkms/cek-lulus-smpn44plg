@@ -13,46 +13,49 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\CetakController;
 use App\Http\Controllers\DeleteAllController;
 use App\Http\Controllers\SklController;
+use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\PublicSKLController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Di sini adalah tempat mendaftarkan rute aplikasi.
+| Sudah dilengkapi dengan pengaman Throttle untuk menahan spam dari siswa.
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-
-/**
- * Home Routes
- */
-
-Route::get('/', [HomeController::class, 'index']);
+// Auth Routes
 Route::get('/login', [AuthController::class, 'LoginForm'])->name('login');
 Route::post('login', [AuthController::class, 'authenticate'])->name('authenticate');
 
-Route::get('/cetak/{id}', [CetakController::class, 'index']);
+Route::redirect('/admin', '/dashboard');
 
+// 🔒 BENTENG KEAMANAN: Halaman utama dan PDF SKL dibatasi maksimal 10 klik per menit per IP
+Route::middleware('throttle:10,1')->group(function () {
+    Route::get('/', [HomeController::class, 'index']);
+    Route::get('/skl/pdf/{nisn}', [PublicSKLController::class, 'generatePdf'])->name('public.skl.pdf');
+});
 
-
-
+// 🔑 AREA ADMIN (Harus Login)
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::delete('/hapus_siswa', [StudentController::class, 'destroy']);
+    Route::delete('/hapus_siswa', [DeleteAllController::class, 'destroy']);
+
+    // Nilai Routes
+    Route::get('/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
+    Route::put('/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
+    
+    // SKL Docx Route
+    Route::get('/skl/{id}/docx', [SklController::class, 'generateDocx'])->name('skl.docx');
 
     Route::prefix('/student')->group(function () {
         Route::get('/', [StudentController::class, 'index']);
         Route::get('/upload', [StudentController::class, 'upload']);
+        Route::get('/download_format', [StudentController::class, 'download_format']);
         Route::get('/create', [StudentController::class, 'create']);
         Route::post('/', [StudentController::class, 'store']);
         Route::post('/import_excel', [StudentController::class, 'import_excel']);
