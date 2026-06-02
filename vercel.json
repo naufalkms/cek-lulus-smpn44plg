@@ -11,10 +11,5 @@
             "src": "/(.*)",
             "dest": "public/index.php"
         }
-    ],
-    "functions": {
-        "public/index.php": {
-            "excludeFiles": "{node_modules,storage/framework/views,storage/logs,*.zip,*.rar}/**"
-        }
-    }
+    ]
 }
