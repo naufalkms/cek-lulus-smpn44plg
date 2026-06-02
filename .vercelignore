@@ -1,0 +1,7 @@
+node_modules/
+storage/framework/views/
+storage/framework/cache/
+storage/logs/
+*.zip
+*.rar
+*.tar.gz
